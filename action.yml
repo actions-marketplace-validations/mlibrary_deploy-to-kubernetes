@@ -26,10 +26,10 @@ inputs:
   namespace:
     description: The Kubernetes namespace to deploy to
     required: true
-  type:
+  resource_type:
     description: Any resource type, comma-separated set of resource types, or 'all'
     default: 'deployment'
-  resource:
+  resource_name:
     description: >-
       Name of the resource whose image to set, a label selector like "--selector='app=someapp'", or "--all"
     default: 'web'
@@ -70,9 +70,9 @@ runs:
     - name: Deploy
       shell: bash
       run: |
-        kubectl set image "$TYPE" "$RESOURCE" "$CONTAINER=$IMAGE"
+        kubectl set image "$RESOURCE_TYPE" "$RESOURCE_NAME" "$CONTAINER=$IMAGE"
       env:
-        TYPE: ${{ inputs.type }}
-        RESOURCE: ${{ inputs.resource }}
+        RESOURCE_TYPE: ${{ inputs.resource_type }}
+        RESOURCE_NAME: ${{ inputs.resource_name }}
         CONTAINER: ${{ inputs.container }}
         IMAGE: ${{ inputs.image }}

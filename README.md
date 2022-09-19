@@ -1,8 +1,10 @@
 # deploy-to-kubernetes
 Action for deploying a ghcr image to a kuberenetes cluster
 
+Uses [kubectl set image](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#-em-image-em-) command.
+
 ## Example
-To use this action to deploy a deployment image:
+To use this action to deploy a deployment image to the `web` deployment and `web` container:
 ```
    - name: Deploy to NAMESPACE
       uses: mlibrary/deploy-to-kubernetes@v3
@@ -27,8 +29,8 @@ To use this action to deploy a cronjob image
         cluster_server: my-kubernetes-server
         namespace_token: ${{ secrets.NAMESPACE_CA }}
         namespace: my-app-namespace
-        type: cronjob
-        resource: my-cronjob-name
+        resource_type: cronjob
+        resource_name: my-cronjob-name
         container: my-cronjob-name
        
 ```
@@ -52,6 +54,6 @@ To use this action to deploy a cronjob image
 |------|-------------|-------|
 |`registry`| Registry to log in to | `ghcr.io` |
 |`registry_username`|  Username to log into the registry with | `${{ github.actor }}` |
-|`type`| Any resource type, comma-separated set of resource types, or 'all'| `deployment` |
-|`resource`| Name of the resource whose image to set, a label selector like `--selector='app=someapp'`, or `--all` | `web` |
+|`resource_type`| Any resource type, comma-separated set of resource types, or 'all'| `deployment` |
+|`resource_name`| Name of the resource whose image to set, a label selector like `--selector='app=someapp'`, or `--all` | `web` |
 |`container`| The container in the resource whose image to set, or "*" for all containers | `web` | 
