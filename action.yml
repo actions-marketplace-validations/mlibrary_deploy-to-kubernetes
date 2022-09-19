@@ -26,23 +26,17 @@ inputs:
   namespace:
     description: The Kubernetes namespace to deploy to
     required: true
-  type:
-    description: "'deployment' or 'cronjob'"
+  resource_type:
+    description: Any resource type, comma-separated set of resource types, or 'all'
     default: 'deployment'
-  deployment:
+  resource_name:
     description: >-
-      Used when type=deployment. The deployment whose image to set.
+      Name of the resource whose image to set, a label selector like "--selector='app=someapp'", or "--all"
     default: 'web'
   container:
     description: >-
-      Used when type=deployment. The container in the deployment whose image to
-      set.
+      The container in the resource whose image to set, or "*" for all containers
     default: 'web'
-  cronjob_name:
-    description: >-
-      Used when type=cronjob. The cronjob whose image to set; only updates the
-      first container for the cronjob
-    required: false
 
 runs:
   using: "composite"
@@ -76,30 +70,9 @@ runs:
     - name: Deploy
       shell: bash
       run: |
-        case "$TYPE" in
-          deployment)
-            kubectl set image deployment "$DEPLOYMENT" "$CONTAINER"="$IMAGE"
-            ;;
-          cronjob)
-            json=$(cat <<EOT
-            [
-              {
-                "op": "replace",
-                "path": "/spec/jobTemplate/spec/template/spec/containers/0/image",
-                "value": "$IMAGE"
-              }
-            ]
-        EOT
-            )
-            kubectl patch cronjob "$CRONJOB_NAME" --type=json -p="$json"
-            ;;
-          *)
-            echo "type must be deployment or cronjob"
-            exit 1;
-        esac
+        kubectl set image "$RESOURCE_TYPE" "$RESOURCE_NAME" "$CONTAINER=$IMAGE"
       env:
-        TYPE: ${{ inputs.type }}
-        DEPLOYMENT: ${{ inputs.deployment }}
-        CRONJOB_NAME: ${{ inputs.cronjob_name }}
+        RESOURCE_TYPE: ${{ inputs.resource_type }}
+        RESOURCE_NAME: ${{ inputs.resource_name }}
         CONTAINER: ${{ inputs.container }}
         IMAGE: ${{ inputs.image }}
