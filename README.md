@@ -21,7 +21,7 @@ To use this action to deploy a deployment image to the `web` deployment and `web
 To use this action to deploy a cronjob image
 ```
    - name: Deploy to NAMESPACE
-      uses: mlibrary/deploy-to-kubernetes@v2
+      uses: mlibrary/deploy-to-kubernetes@v3
       with:
         registry_token: ${{ secrets.GITHUB_TOKEN }}
         image: ghcr.io/myorganization/my_app:latest
